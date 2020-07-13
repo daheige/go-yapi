@@ -107,7 +107,7 @@ func (y *yapi) generateArray(field *pb.FieldDescriptorProto, msgs []*pb.Descript
 	if isMessage(field) {
 		y.generateMessage(matchMessage(msgs, *field.TypeName), msgs)
 	} else {
-		y.gen.P(`"type":"`, field.TypeName, `",`)
+		y.gen.P(`"type":"`, fieldType(field), `",`)
 		y.gen.P(`"description": `, `"comments"`)
 	}
 	y.gen.P("}")
@@ -155,6 +155,10 @@ func jsonType(field *pb.FieldDescriptorProto) string {
 		return "array"
 	}
 
+	return fieldType(field)
+}
+
+func fieldType(field *pb.FieldDescriptorProto) string {
 	switch *field.Type {
 	case pb.FieldDescriptorProto_TYPE_STRING, pb.FieldDescriptorProto_TYPE_BYTES:
 		return "string"
