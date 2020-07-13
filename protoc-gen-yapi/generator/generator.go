@@ -1082,6 +1082,7 @@ func (g *Generator) GenerateAllFiles() {
 	for _, file := range g.genFiles {
 		genFileMap[file] = true
 	}
+
 	for _, file := range g.allFiles {
 		g.Reset()
 		g.annotations = nil
@@ -1111,6 +1112,13 @@ func (g *Generator) runPlugins(file *FileDescriptor) {
 	for _, p := range plugins {
 		p.Generate(file)
 	}
+}
+
+func (g *Generator) AllMessages() (ms []*descriptor.DescriptorProto) {
+	for _, file := range g.allFiles {
+		ms = append(ms, file.MessageType...)
+	}
+	return
 }
 
 // Fill the response protocol buffer with the generated output for all the files we're

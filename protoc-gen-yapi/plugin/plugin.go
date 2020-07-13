@@ -22,13 +22,15 @@ func (y *yapi) Init(g *generator.Generator) {
 	y.gen = g
 }
 
-func (y *yapi) GenerateImports(file *generator.FileDescriptor) {}
+func (y *yapi) GenerateImports(file *generator.FileDescriptor) {
+
+}
 
 // generate yapi file
 func (y *yapi) Generate(file *generator.FileDescriptor) {
-	//y.gen.P("// NOT EDIT")
+	ms := y.gen.AllMessages()
 	for _, service := range file.FileDescriptorProto.Service {
-		y.generateService(service, file.MessageType)
+		y.generateService(service, ms)
 	}
 }
 
@@ -177,8 +179,6 @@ func matchMessage(msgs []*pb.DescriptorProto, name string) *pb.DescriptorProto {
 			return msg
 		}
 	}
-
-	panic(name)
 
 	return nil
 }
