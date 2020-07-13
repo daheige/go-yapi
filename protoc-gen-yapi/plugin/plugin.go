@@ -176,8 +176,17 @@ func fieldType(field *pb.FieldDescriptorProto) string {
 
 func matchMessage(msgs []*pb.DescriptorProto, name string) *pb.DescriptorProto {
 	for _, msg := range msgs {
+		idx := strings.LastIndex(name, ".")
+		if idx != -1 {
+			name = name[idx+1:]
+		}
+
 		if strings.Contains(name, *msg.Name) {
 			return msg
+		}
+
+		if desc := matchMessage(msg.NestedType, name); desc != nil {
+			return desc
 		}
 	}
 
