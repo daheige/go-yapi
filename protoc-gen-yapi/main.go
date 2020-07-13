@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/protoc-gen-go/generator"
+	"github.com/lanceryou/go-yapi/protoc-gen-yapi/generator"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 
 	g.GenerateAllFiles()
 	for i := 0; i < len(g.Response.File); i++ {
-		g.Response.File[i].Name = proto.String(strings.Replace(*g.Response.File[i].Name, ".pb.go", ".validator.pb.go", -1))
+		g.Response.File[i].Name = proto.String(strings.Replace(*g.Response.File[i].Name, ".pb.go", ".yapi.json", -1))
 	}
 
 	// Send back the results.
