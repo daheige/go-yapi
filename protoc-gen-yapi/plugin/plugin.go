@@ -79,8 +79,8 @@ func (y *yapi) generateMessage(msg *pb.DescriptorProto, messages []*pb.Descripto
 	}
 
 	y.gen.P(`"type":"object","properties":{`)
-	for i, filed := range msg.Field {
-		y.generateFiled(filed, messages)
+	for i, field := range msg.Field {
+		y.generateFiled(field, messages)
 		if len(msg.Field) > 1 && i != len(msg.Field)-1 {
 			y.gen.P(",")
 		}
@@ -92,19 +92,20 @@ func (y *yapi) generateMessage(msg *pb.DescriptorProto, messages []*pb.Descripto
 func (y *yapi) generateFiled(field *pb.FieldDescriptorProto, msgs []*pb.DescriptorProto) {
 	y.gen.P(`"`, field.Name, `":{`)
 	typ := jsonType(field)
-	y.gen.P(`"type":"`, typ, `",`)
 	switch typ {
 	case "array":
 		y.generateArray(field, msgs)
 	case "object":
-		y.generateMessage(matchMessage(msgs, *field.Name), msgs)
+		y.generateMessage(matchMessage(msgs, *field.TypeName), msgs)
 	case "string", "number", "boolean":
+		y.gen.P(`"type":"`, typ, `",`)
 		y.gen.P(`"description": `, `"comments"`)
 	}
 	y.gen.P("}")
 }
 
 func (y *yapi) generateArray(field *pb.FieldDescriptorProto, msgs []*pb.DescriptorProto) {
+	y.gen.P(`"type":"array",`)
 	y.gen.P(`"items": {`)
 	if isMessage(field) {
 		y.generateMessage(matchMessage(msgs, *field.TypeName), msgs)
