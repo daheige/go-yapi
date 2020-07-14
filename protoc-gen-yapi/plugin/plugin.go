@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"fmt"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/lanceryou/go-yapi/protoc-gen-yapi/generator"
 	"strings"
@@ -29,6 +30,13 @@ func (y *yapi) GenerateImports(file *generator.FileDescriptor) {
 // generate yapi file
 func (y *yapi) Generate(file *generator.FileDescriptor) {
 	ms := y.gen.AllMessages()
+
+	var nests []*pb.DescriptorProto
+	for _, m := range ms {
+		nests = append(nests, m.NestedType...)
+	}
+	ms = append(ms, nests...)
+
 	for _, service := range file.FileDescriptorProto.Service {
 		y.generateService(service, ms)
 	}
@@ -175,22 +183,18 @@ func fieldType(field *pb.FieldDescriptorProto) string {
 }
 
 func matchMessage(msgs []*pb.DescriptorProto, name string) *pb.DescriptorProto {
+	idx := strings.LastIndex(name, ".")
+	if idx != -1 {
+		name = name[idx+1:]
+	}
+
 	for _, msg := range msgs {
-		idx := strings.LastIndex(name, ".")
-		if idx != -1 {
-			name = name[idx+1:]
-		}
-
-		if strings.Contains(name, *msg.Name) {
+		if name == *msg.Name {
 			return msg
-		}
-
-		if desc := matchMessage(msg.NestedType, name); desc != nil {
-			return desc
 		}
 	}
 
-	return nil
+	panic(fmt.Sprintf("%s not found", name))
 }
 
 func isRepeated(field *pb.FieldDescriptorProto) bool {
