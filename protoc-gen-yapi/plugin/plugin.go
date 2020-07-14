@@ -124,43 +124,6 @@ func (y *yapi) generateArray(field *pb.FieldDescriptorProto, msgs []*pb.Descript
 	y.gen.P("}")
 }
 
-/*
-"dropshipper_info": {
-			"type": "object",
-			"properties": {
-				"option": {
-					"type": "string",
-					"description": "\"true\" \"false\""
-				}
-			},
-			"required": ["option"]
-		},
-
-"offset": {
-			"type": "number",
-			"description": "查询"
-		},
-		"field_1": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
-		},
-	"field_1":{
-            "type":"array",
-            "items":{
-                "type":"object",
-                "properties":{
-                    "xx":{
-                        "type":"string"
-                    }
-                },
-                "required":[
-                    "xx"
-                ]
-            }
-        }
-*/
 func jsonType(field *pb.FieldDescriptorProto) string {
 	if *field.Label == pb.FieldDescriptorProto_LABEL_REPEATED {
 		return "array"
